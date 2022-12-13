@@ -108,7 +108,7 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
         range = range + 1;
         //perform operations to obtain hourly power from instantaneous powers
         daily_consumption = powersToEnergyConsumption(powersList, timestampsList);
-        logger.info("=============== OUTPUT DAILY CONSUMPTION  =========" + daily_consumption);
+        logger.info("=============== OUTPUT DAILY CONSUMPTION  =========" + daily_consumption  );
         dailyConsumptionListForSevenDay.add(daily_consumption);
         dailyConsumptionListForMonth.add(daily_consumption);
         // Remove all elements from the Lists
@@ -123,7 +123,7 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
         day_precedent = day_current;
         //perform operations to obtain hourly power from instantaneous powers
         daily_consumption = powersToEnergyConsumption(powersList, timestampsList);
-        logger.info("=============== OUTPUT DAILY CONSUMPTION  =========" + daily_consumption);
+        logger.info("=============== OUTPUT DAILY CONSUMPTION  =========" + daily_consumption + "kWh");
         dailyConsumptionListForSevenDay.add(daily_consumption);
         dailyConsumptionListForMonth.add(daily_consumption);
         // Remove all elements from the Lists
@@ -135,14 +135,14 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
       if(range == 7){
         range = 0;
         seven_day_consumption = dailyConsumptionsToMonthlyConsumption(dailyConsumptionListForSevenDay);
-        logger.info("=============== OUTPUT SEVEN DAY CONSUMPTION  =========" + monthly_consumption);
+        logger.info("=============== OUTPUT SEVEN DAY CONSUMPTION  =========" + seven_day_consumption + "kWh");
         dailyConsumptionListForSevenDay.clear();
       }
 
       if(month_current != month_precedent){
         month_precedent = month_current;
         monthly_consumption = dailyConsumptionsToMonthlyConsumption(dailyConsumptionListForMonth);
-        logger.info("=============== OUTPUT MONTHLY CONSUMPTION  =========" + monthly_consumption);
+        logger.info("=============== OUTPUT MONTHLY CONSUMPTION  =========" + monthly_consumption + "kWh");
         dailyConsumptionListForMonth.clear();
       }
 
