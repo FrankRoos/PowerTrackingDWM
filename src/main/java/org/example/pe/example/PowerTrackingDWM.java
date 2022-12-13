@@ -135,7 +135,7 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
       if(range == 7){
         range = 0;
         seven_day_consumption = dailyConsumptionsToMonthlyConsumption(dailyConsumptionListForSevenDay);
-        logger.info("=============== OUTPUT SEVEN DAY CONSUMPTION  =========" + seven_day_consumption + " kWh");
+        logger.info("=============== OUTPUT SEVEN DAY CONSUMPTION  =========" + seven_day_consumption +" kWh");
         dailyConsumptionListForSevenDay.clear();
       }
 
