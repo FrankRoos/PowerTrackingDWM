@@ -73,9 +73,9 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
                     .requiredPropertyWithUnaryMapping(EpRequirements.numberReq(),
                             Labels.withId(TIMESTAMP_VALUE), PropertyScope.NONE)
                     .build())
-            .outputStrategy(OutputStrategies.append(EpProperties.doubleEp(Labels.withId(MONTHLY_CONSUMPTION), "Monthly Consumption", SO.Number),
-                    EpProperties.doubleEp(Labels.withId(DAILY_CONSUMPTION), "Daily Consumption", SO.Number),
-                    EpProperties.doubleEp(Labels.withId(SEVENDAY_CONSUMPTION), "Seven Day Consumption", SO.Number)))
+            .outputStrategy(OutputStrategies.append(EpProperties.doubleEp(Labels.withId(MONTHLY_CONSUMPTION), "monthly consumption", SO.Number),
+                    EpProperties.doubleEp(Labels.withId(DAILY_CONSUMPTION), "daily consumption", SO.Number),
+                    EpProperties.doubleEp(Labels.withId(SEVENDAY_CONSUMPTION), "seven day consumption", SO.Number)))
             .build();
   }
 
@@ -123,7 +123,7 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
         day_precedent = day_current;
         //perform operations to obtain hourly power from instantaneous powers
         daily_consumption = powersToEnergyConsumption(powersList, timestampsList);
-        logger.info("=============== OUTPUT DAILY CONSUMPTION  =========" + daily_consumption + "kWh");
+        logger.info("=============== OUTPUT DAILY CONSUMPTION  =========" + daily_consumption + " kWh");
         dailyConsumptionListForSevenDay.add(daily_consumption);
         dailyConsumptionListForMonth.add(daily_consumption);
         // Remove all elements from the Lists
@@ -135,14 +135,14 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
       if(range == 7){
         range = 0;
         seven_day_consumption = dailyConsumptionsToMonthlyConsumption(dailyConsumptionListForSevenDay);
-        logger.info("=============== OUTPUT SEVEN DAY CONSUMPTION  =========" + seven_day_consumption + "kWh");
+        logger.info("=============== OUTPUT SEVEN DAY CONSUMPTION  =========" + seven_day_consumption + " kWh");
         dailyConsumptionListForSevenDay.clear();
       }
 
       if(month_current != month_precedent){
         month_precedent = month_current;
         monthly_consumption = dailyConsumptionsToMonthlyConsumption(dailyConsumptionListForMonth);
-        logger.info("=============== OUTPUT MONTHLY CONSUMPTION  =========" + monthly_consumption + "kWh");
+        logger.info("=============== OUTPUT MONTHLY CONSUMPTION  =========" + monthly_consumption + " kWh");
         dailyConsumptionListForMonth.clear();
       }
 
@@ -156,9 +156,9 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
       addToLists(power, timestamp);
     }
 
-    event.addField("Daily Consumption", daily_consumption);
-    event.addField("Seven Day Consumption", seven_day_consumption);
-    event.addField("Monthly Consumption", monthly_consumption);
+    event.addField("daily consumption", daily_consumption);
+    event.addField("seven day consumption", seven_day_consumption);
+    event.addField("monthly consumption", monthly_consumption);
 
     out.collect(event);
 

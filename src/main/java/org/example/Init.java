@@ -30,7 +30,7 @@ import org.apache.streampipes.messaging.kafka.SpKafkaProtocolFactory;
 import org.apache.streampipes.messaging.mqtt.SpMqttProtocolFactory;
 
 import org.example.pe.example.PowerTrackingDWM;
-import org.example.pe.example.ExampleDataSink;
+//import org.example.pe.example.ExampleDataSink;
 
 public class Init extends ExtensionsModelSubmitter {
 
@@ -44,7 +44,7 @@ public class Init extends ExtensionsModelSubmitter {
                     "human-readable service name",
                     "human-readable service description", 8090)
             .registerPipelineElement(new PowerTrackingDWM())
-            .registerPipelineElement(new ExampleDataSink())
+            //.registerPipelineElement(new ExampleDataSink())
             .registerMessagingFormats(
                     new JsonDataFormatFactory(),
                     new CborDataFormatFactory(),
