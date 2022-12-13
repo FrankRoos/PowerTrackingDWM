@@ -108,7 +108,7 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
         range = range + 1;
         //perform operations to obtain hourly power from instantaneous powers
         daily_consumption = powersToEnergyConsumption(powersList, timestampsList);
-        logger.info("=============== OUTPUT DAILY CONSUMPTION  =========" + daily_consumption  );
+        logger.info("=============== OUTPUT DAILY CONSUMPTION  =========" + daily_consumption  + " kWh" + timestamp);
         dailyConsumptionListForSevenDay.add(daily_consumption);
         dailyConsumptionListForMonth.add(daily_consumption);
         // Remove all elements from the Lists
@@ -123,7 +123,7 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
         day_precedent = day_current;
         //perform operations to obtain hourly power from instantaneous powers
         daily_consumption = powersToEnergyConsumption(powersList, timestampsList);
-        logger.info("=============== OUTPUT DAILY CONSUMPTION  =========" + daily_consumption + " kWh");
+        logger.info("=============== OUTPUT DAILY CONSUMPTION  =========" + daily_consumption + " kWh" + timestamp);
         dailyConsumptionListForSevenDay.add(daily_consumption);
         dailyConsumptionListForMonth.add(daily_consumption);
         // Remove all elements from the Lists
