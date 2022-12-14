@@ -46,7 +46,7 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
 
   private String input_power_value;
   private String input_timestamp_value;
-  private int day_precedent = 0, month_precedent = 0, range = 0;
+  private static int day_precedent = -1, month_precedent = -1, range = 0;
   double daily_consumption = 0.0;
   double monthly_consumption = 0.0;
   double seven_day_consumption = 0.0;
@@ -79,30 +79,24 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
             .build();
   }
 
-
   @Override
   public void onInvocation(ProcessorParams parameters, SpOutputCollector out, EventProcessorRuntimeContext ctx) throws SpRuntimeException  {
     this.input_power_value = parameters.extractor().mappingPropertyValue(INPUT_VALUE);
     this.input_timestamp_value = parameters.extractor().mappingPropertyValue(TIMESTAMP_VALUE);
   }
 
-
   @Override
   public void onEvent(Event event,SpOutputCollector out){
-    Double power;
-    Long timestamp;
-    int day_current, month_current;
-
     //recovery power value
-    power = event.getFieldBySelector(this.input_power_value).getAsPrimitive().getAsDouble();
+    Double power = event.getFieldBySelector(this.input_power_value).getAsPrimitive().getAsDouble();
 
     //recovery timestamp value
-    timestamp = event.getFieldBySelector(this.input_timestamp_value).getAsPrimitive().getAsLong();
+    Long timestamp = event.getFieldBySelector(this.input_timestamp_value).getAsPrimitive().getAsLong();
 
-    day_current = getDayOrMonth(timestamp, 'd');
-    month_current = getDayOrMonth(timestamp, 'm');
+    int day_current = getDayOrMonth(timestamp, 'd');
+    int month_current = getDayOrMonth(timestamp, 'm');
 
-    if((day_current != day_precedent || month_current != month_precedent) && day_precedent != 0){
+    if((day_current != day_precedent || month_current != month_precedent) && day_precedent != -1){
 
       if(day_current == day_precedent){
         range = range + 1;
@@ -134,21 +128,21 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
 
       if(range == 7){
         range = 0;
-        seven_day_consumption = dailyConsumptionsToMonthlyConsumption(dailyConsumptionListForSevenDay);
+        seven_day_consumption = dailyConsumptionsToSevenDayOrMonthlyConsumption(dailyConsumptionListForSevenDay);
         logger.info("=============== OUTPUT SEVEN DAY CONSUMPTION  =========" + seven_day_consumption +" kWh");
         dailyConsumptionListForSevenDay.clear();
       }
 
       if(month_current != month_precedent){
         month_precedent = month_current;
-        monthly_consumption = dailyConsumptionsToMonthlyConsumption(dailyConsumptionListForMonth);
+        monthly_consumption = dailyConsumptionsToSevenDayOrMonthlyConsumption(dailyConsumptionListForMonth);
         logger.info("=============== OUTPUT MONTHLY CONSUMPTION  =========" + monthly_consumption + " kWh");
         dailyConsumptionListForMonth.clear();
       }
 
     }else {
       // set the start time for computations
-      if (day_precedent == 0){
+      if (day_precedent == -1){
         month_precedent = month_current;
         day_precedent = day_current;
       }
@@ -179,6 +173,7 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
     return c=='d' ? day:month;
   }
 
+
   private void addToLists(Double power, Long timestamp) {
     powersList.add(power);
     timestampsList.add(timestamp);
@@ -189,7 +184,7 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
     timestampsList.clear();
   }
 
-  private double dailyConsumptionsToMonthlyConsumption(List<Double> dailyConsumptionList) {
+  private double dailyConsumptionsToSevenDayOrMonthlyConsumption(List<Double> dailyConsumptionList) {
     double sum = 0.0;
     for (Double value : dailyConsumptionList) sum = sum + value;
     return sum;
