@@ -35,23 +35,23 @@ import org.apache.streampipes.wrapper.standalone.StreamPipesDataProcessor;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 
 public class PowerTrackingDWM extends StreamPipesDataProcessor {
 
+
   private String input_power_value;
   private String input_timestamp_value;
+  private String input_date;
   private static int day_precedent = -1, month_precedent = -1, range = 0;
   double daily_consumption = 0.0;
   double monthly_consumption = 0.0;
   double seven_day_consumption = 0.0;
   private static final String INPUT_VALUE = "value";
   private static final String TIMESTAMP_VALUE = "timestamp_value";
+  private static final String DATE_VALUE = "date";
   private static final String DAILY_CONSUMPTION = "daily_consumption";
   private static final String SEVENDAY_CONSUMPTION = "seven_day_consumption";
   private static final String MONTHLY_CONSUMPTION = "monthly_consumption";
@@ -72,6 +72,8 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
                             Labels.withId(INPUT_VALUE), PropertyScope.NONE)
                     .requiredPropertyWithUnaryMapping(EpRequirements.numberReq(),
                             Labels.withId(TIMESTAMP_VALUE), PropertyScope.NONE)
+                    .requiredPropertyWithUnaryMapping(EpRequirements.stringReq(),
+                            Labels.withId(DATE_VALUE), PropertyScope.NONE)
                     .build())
             .outputStrategy(OutputStrategies.append(EpProperties.doubleEp(Labels.withId(MONTHLY_CONSUMPTION), "monthly consumption", SO.Number),
                     EpProperties.doubleEp(Labels.withId(DAILY_CONSUMPTION), "daily consumption", SO.Number),
@@ -83,6 +85,7 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
   public void onInvocation(ProcessorParams parameters, SpOutputCollector out, EventProcessorRuntimeContext ctx) throws SpRuntimeException  {
     this.input_power_value = parameters.extractor().mappingPropertyValue(INPUT_VALUE);
     this.input_timestamp_value = parameters.extractor().mappingPropertyValue(TIMESTAMP_VALUE);
+    this.input_date= parameters.extractor().mappingPropertyValue(DATE_VALUE);
   }
 
   @Override
@@ -92,9 +95,13 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
 
     //recovery timestamp value
     Long timestamp = event.getFieldBySelector(this.input_timestamp_value).getAsPrimitive().getAsLong();
+    String date = event.getFieldBySelector(this.input_date).getAsPrimitive().getAsString();
 
-    int day_current = getDayOrMonth(timestamp, 'd');
-    int month_current = getDayOrMonth(timestamp, 'm');
+    String[] ymd_hms = date.split(" ");
+    String[] ymd = ymd_hms[0].split("-");
+
+    int day_current = Integer.parseInt(ymd[2]);
+    int month_current = Integer.parseInt(ymd[1]);
 
     if((day_current != day_precedent || month_current != month_precedent) && day_precedent != -1){
 
@@ -157,22 +164,6 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
     out.collect(event);
 
   }
-
-  private int getDayOrMonth(Long timestamp, char c) {
-    // Convert the timestamp to an Instant
-    //Instant instant = Instant.ofEpochMilli(timestamp);
-    Date instant = new Date(timestamp);
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
-    sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-    String dateString = sdf.format(instant);
-    // Use the Instant to create a Date object
-    String[] date = dateString.split(" ");
-    String[] ymd = date[0].split("-");
-    int day = Integer.parseInt(ymd[2]);
-    int month = Integer.parseInt(ymd[1]);
-    return c=='d' ? day:month;
-  }
-
 
   private void addToLists(Double power, Long timestamp) {
     powersList.add(power);
