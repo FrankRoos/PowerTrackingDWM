@@ -16,7 +16,7 @@
  *
  */
 
-package org.example;
+package org.gft;
 
 import org.apache.streampipes.container.extensions.ExtensionsModelSubmitter;
 import org.apache.streampipes.container.model.SpServiceDefinition;
@@ -29,8 +29,8 @@ import org.apache.streampipes.messaging.jms.SpJmsProtocolFactory;
 import org.apache.streampipes.messaging.kafka.SpKafkaProtocolFactory;
 import org.apache.streampipes.messaging.mqtt.SpMqttProtocolFactory;
 
-import org.example.pe.example.PowerTrackingDWM;
-//import org.example.pe.example.ExampleDataSink;
+import org.gft.processors.powertrackingdwm.PowerTrackingDWM;
+//import org.gft.pe.gft.ExampleDataSink;
 
 public class Init extends ExtensionsModelSubmitter {
 
@@ -40,7 +40,7 @@ public class Init extends ExtensionsModelSubmitter {
 
   @Override
   public SpServiceDefinition provideServiceDefinition() {
-    return SpServiceDefinitionBuilder.create("org.example",
+    return SpServiceDefinitionBuilder.create("org.gft",
                     "human-readable service name",
                     "human-readable service description", 8090)
             .registerPipelineElement(new PowerTrackingDWM())

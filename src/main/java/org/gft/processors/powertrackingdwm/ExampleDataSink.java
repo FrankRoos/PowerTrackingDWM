@@ -16,7 +16,7 @@
  *
  */
 
-package org.example.pe.example;
+package org.gft.processors.powertrackingdwm;
 
 import org.apache.streampipes.commons.exceptions.SpRuntimeException;
 import org.apache.streampipes.model.DataSinkType;
@@ -28,7 +28,6 @@ import org.apache.streampipes.sdk.helpers.EpRequirements;
 import org.apache.streampipes.sdk.helpers.Labels;
 import org.apache.streampipes.sdk.helpers.Locales;
 import org.apache.streampipes.sdk.utils.Assets;
-import org.apache.streampipes.sdk.utils.Datatypes;
 import org.apache.streampipes.wrapper.context.EventSinkRuntimeContext;
 import org.apache.streampipes.wrapper.standalone.SinkParams;
 import org.apache.streampipes.wrapper.standalone.StreamPipesDataSink;
@@ -38,7 +37,7 @@ public class ExampleDataSink extends StreamPipesDataSink {
 
 private String exampleText;
 
-private static final String EXAMPLE_KEY = "example-key";
+private static final String EXAMPLE_KEY = "gft-key";
 
   @Override
   public DataSinkDescription declareModel(){

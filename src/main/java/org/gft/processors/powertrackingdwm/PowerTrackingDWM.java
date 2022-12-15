@@ -16,7 +16,7 @@
  *
  */
 
-package org.example.pe.example;
+package org.gft.processors.powertrackingdwm;
 
 import org.apache.streampipes.commons.exceptions.SpRuntimeException;
 import org.apache.streampipes.model.DataProcessorType;
@@ -41,14 +41,13 @@ import java.util.List;
 
 public class PowerTrackingDWM extends StreamPipesDataProcessor {
 
-
   private String input_power_value;
   private String input_timestamp_value;
   private String input_date;
   private static int day_precedent = -1, month_precedent = -1, range = 0;
-  double daily_consumption = 0.0;
-  double monthly_consumption = 0.0;
-  double seven_day_consumption = 0.0;
+  private static double daily_consumption = 0.0;
+  private static double monthly_consumption = 0.0;
+  private static double seven_day_consumption = 0.0;
   private static final String INPUT_VALUE = "value";
   private static final String TIMESTAMP_VALUE = "timestamp_value";
   private static final String DATE_VALUE = "date";
@@ -63,7 +62,7 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
 
   @Override
   public DataProcessorDescription declareModel() {
-    return ProcessingElementBuilder.create("org.example.pe.example.processor","PowerTrackingDWM", "Computes Daily and Monthly Energy Consumption based on the given instantaneous powers and timestamps values.")
+    return ProcessingElementBuilder.create("org.gft.processors.powertrackingdwm","PowerTrackingDWM", "Computes Daily and Monthly Energy Consumption based on the given instantaneous powers and timestamps values.")
             .withAssets(Assets.DOCUMENTATION, Assets.ICON)
             .withLocales(Locales.EN)
             .category(DataProcessorType.AGGREGATE)
@@ -92,16 +91,17 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
   public void onEvent(Event event,SpOutputCollector out){
     //recovery power value
     Double power = event.getFieldBySelector(this.input_power_value).getAsPrimitive().getAsDouble();
-
     //recovery timestamp value
     Long timestamp = event.getFieldBySelector(this.input_timestamp_value).getAsPrimitive().getAsLong();
+    //recovery date value
     String date = event.getFieldBySelector(this.input_date).getAsPrimitive().getAsString();
 
+    // Day and Month extraction
     String[] ymd_hms = date.split(" ");
     String[] ymd = ymd_hms[0].split("-");
-
     int day_current = Integer.parseInt(ymd[2]);
     int month_current = Integer.parseInt(ymd[1]);
+
 
     if((day_current != day_precedent || month_current != month_precedent) && day_precedent != -1){
 

@@ -1,5 +1,5 @@
-org.example.pe.example.processor.title=PowerTracking DWM
-org.example.pe.example.processor.description=Computes Daily and Monthly Energy Consumption based on the given instantaneous powers and timestamps values.
+org.gft.processors.powertrackingdwm.title=PowerTracking DWM
+org.gft.processors.powertrackingdwm.description=Computes Daily and Monthly Energy Consumption based on the given instantaneous powers and timestamps values.
 value.title=Instantaneous Power
 value.description=Energy Transfer speed in one second
 
