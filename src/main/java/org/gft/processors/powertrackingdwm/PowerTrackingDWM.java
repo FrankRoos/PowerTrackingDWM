@@ -105,19 +105,6 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
 
     if((day_current != day_precedent || month_current != month_precedent) && day_precedent != -1){
 
-      if(day_current == day_precedent){
-        range = range + 1;
-        //perform operations to obtain hourly power from instantaneous powers
-        daily_consumption = powersToEnergyConsumption(powersList, timestampsList);
-        logger.info("=============== OUTPUT DAILY CONSUMPTION  =========" + daily_consumption  + " kWh" + timestamp);
-        dailyConsumptionListForSevenDay.add(daily_consumption);
-        dailyConsumptionListForMonth.add(daily_consumption);
-        // Remove all elements from the Lists
-        clearLists(powersList, timestampsList);
-        // Add current events for the next computation
-        addToLists(power, timestamp);
-      }
-
       if(day_current != day_precedent){
         range = range + 1;
         // reset day for computations
@@ -128,9 +115,11 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
         dailyConsumptionListForSevenDay.add(daily_consumption);
         dailyConsumptionListForMonth.add(daily_consumption);
         // Remove all elements from the Lists
-        clearLists(powersList, timestampsList);
+        powersList.clear();
+        timestampsList.clear();
         // Add current events for the next computation
-        addToLists(power, timestamp);
+        powersList.add(power);
+        timestampsList.add(timestamp);
       }
 
       if(range == 7){
@@ -154,7 +143,8 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
         day_precedent = day_current;
       }
       // add power to the lists
-      addToLists(power, timestamp);
+      powersList.add(power);
+      timestampsList.add(timestamp);
     }
 
     event.addField("daily consumption", daily_consumption);
@@ -163,16 +153,6 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
 
     out.collect(event);
 
-  }
-
-  private void addToLists(Double power, Long timestamp) {
-    powersList.add(power);
-    timestampsList.add(timestamp);
-  }
-
-  private void clearLists(List<Double> powersList, List<Long> timestampsList) {
-    powersList.clear();
-    timestampsList.clear();
   }
 
   private double dailyConsumptionsToSevenDayOrMonthlyConsumption(List<Double> dailyConsumptionList) {
