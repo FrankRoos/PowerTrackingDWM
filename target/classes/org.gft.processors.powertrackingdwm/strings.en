@@ -1,0 +1,19 @@
+org.gft.processors.powertrackingdwm.title=PowerTracking DWM
+org.gft.processors.powertrackingdwm.description=Computes Daily and Monthly Energy Consumption based on the given instantaneous powers and timestamps values.
+value.title=Instantaneous Power
+value.description=Energy Transfer speed in one second
+
+timestamp_value.title=Timestamp
+timestamp_value.description= Timestamp at which the power was taken.
+
+date.title=Date
+date.description= Date on which the power was taken.
+
+daily_consumption.title=Daily Consumption
+daily_consumption.description=The value of daily consumption
+
+seven_day_consumption.title=Seven Day Consumption
+seven_day_consumption.description=The value of seven day consumption
+
+monthly_consumption.title=Monthly Consumption
+monthly_consumption.description =  The value of monthly consumption

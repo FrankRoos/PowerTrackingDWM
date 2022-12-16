@@ -101,6 +101,7 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
     String[] ymd = ymd_hms[0].split("-");
     int day_current = Integer.parseInt(ymd[2]);
     int month_current = Integer.parseInt(ymd[1]);
+    System.out.println(month_current + " " + day_current + "  " + timestamp +"   "+date);
 
 
     if((day_current != day_precedent || month_current != month_precedent) && day_precedent != -1){
@@ -109,6 +110,9 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
         range = range + 1;
         // reset day for computations
         day_precedent = day_current;
+        // Add current events for the next computation
+        powersList.add(power);
+        timestampsList.add(timestamp);
         //perform operations to obtain hourly power from instantaneous powers
         daily_consumption = powersToEnergyConsumption(powersList, timestampsList);
         logger.info("=============== OUTPUT DAILY CONSUMPTION  =========" + daily_consumption + " kWh" + timestamp);
@@ -157,8 +161,10 @@ public class PowerTrackingDWM extends StreamPipesDataProcessor {
 
   private double dailyConsumptionsToSevenDayOrMonthlyConsumption(List<Double> dailyConsumptionList) {
     double sum = 0.0;
+    DecimalFormat df = new DecimalFormat("#.#####");
+    df.setRoundingMode(RoundingMode.CEILING);
     for (Double value : dailyConsumptionList) sum = sum + value;
-    return sum;
+    return Double.parseDouble(df.format(sum));
   }
 
   public double powersToEnergyConsumption(List<Double> powers, List<Long> timestamps) {
